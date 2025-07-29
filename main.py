@@ -1,15 +1,18 @@
-from telethon import TelegramClient, events
-from config import API_ID, API_HASH, SOURCE_CHANNELS, TARGET_CHANNEL
 
-client = TelegramClient('session', API_ID, API_HASH)
+from telethon import TelegramClient, events
+from Config import API_ID, API_HASH, BOT_TOKEN, SOURCE_CHANNELS, DESTINATION_CHANNEL
+
+client = TelegramClient('bot_session', API_ID, API_HASH)
 
 @client.on(events.NewMessage(chats=SOURCE_CHANNELS))
 async def handler(event):
     try:
-        await client.send_message(TARGET_CHANNEL, event.message)
+        await event.forward_to(DESTINATION_CHANNEL)
+        print(f"✅ Forwarded message from {event.chat.username}")
     except Exception as e:
-        print("Error:", e)
+        print("❌ Error:", e)
 
-print("Bot running...")
-client.start()
+print("🚀 Bot starting...")
+client.start(bot_token=BOT_TOKEN)
+print("🤖 Bot is running and listening for messages...")
 client.run_until_disconnected()
